@@ -9,6 +9,7 @@ def random_color():
 class Obstacle:
     min_obstacle_size = 100
     max_obstacle_size = 300
+    bin = 20
 
     def __init__(self, display_width, display_height):
         self.display_width = display_width
@@ -21,10 +22,31 @@ class Obstacle:
 
     def get_state(self):
         return {
-            "obstacle_x": self.x,
-            "obstacle_y": self.y,
+            "obstacle_x": int(self.x),
+            "obstacle_y": int(self.y),
             "obstacle_width": self.width,
             "obstacle_height": self.height
+        }
+
+    def get__binned_state(self):
+        return {
+            "obstacle_x": self.x // self.bin,
+            "obstacle_y": (self.y+self.max_obstacle_size) // self.bin,  # ensure positive value
+            "obstacle_width": self.width // self.bin
+        }
+
+    def get_space(self):
+        return {
+            "obstacle_x": (0, self.display_width - self.width),
+            "obstacle_y": (-self.max_obstacle_size, self.display_height),
+            "obstacle_width": (self.min_obstacle_size, self.max_obstacle_size),
+        }
+
+    def get_binned_space(self):
+        return {
+            "obstacle_x": (self.display_width - self.width) // self.bin,
+            "obstacle_y": (self.display_height-self.max_obstacle_size) // self.bin,
+            "obstacle_width": (self.max_obstacle_size - self.min_obstacle_size) // self.bin,
         }
 
     def update_state(self):

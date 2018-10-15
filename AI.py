@@ -1,19 +1,22 @@
 import pyautogui
 import time
+from QTable import *
 
-DEBUG = False
+DEBUG = True
 
 
 def process_data(input_pipe):
     start = time.time()
     while True:
         data = input_pipe.recv()
-        # print(data)
+        print(data)
         if data == "QUIT":
             break
         elif data == "CRASH":
             start = time.time()
         elif isinstance(data, dict):
+            print(encode(data))
+
             pyautogui.keyUp('left')
             pyautogui.keyUp('right')
 

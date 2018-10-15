@@ -1,5 +1,6 @@
 class Car:
     speed_increment = 0.15
+    bin = 20
 
     def __init__(self, display_width, display_height, speed):
         self.display_width = display_width
@@ -12,8 +13,18 @@ class Car:
 
     def get_state(self):
         return {
-            "car_x": self.x,
-            "car_y": self.y,
+            "car_x": int(self.x),
+            "car_y": int(self.y),
+        }
+
+    def get_binned_state(self):
+        return {
+            "car_x": int(self.x/self.bin)
+        }
+
+    def get_binned_space(self):
+        return {
+            "car_x": (self.display_width - self.width) // self.bin
         }
 
     def go_faster(self):

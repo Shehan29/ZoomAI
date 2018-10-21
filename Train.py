@@ -5,8 +5,10 @@ import os.path
 
 
 def game_loop(render_game):
+    GameUtils.gameDisplay, GameUtils.traffic_images, GameUtils.car_image = GameUtils.initialize_resources()
+
     model = QTable()
-    file_name = "model_amazing.npy"
+    file_name = "model.npy"
     if os.path.isfile(file_name):
         model.q_table = np.load(file_name)
 
@@ -101,7 +103,7 @@ def game_loop(render_game):
 
 
 if __name__ == '__main__':
-    render = True
+    render = False
     GameUtils.RENDER = render
     game_loop(render)
     pygame.quit()

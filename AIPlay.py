@@ -1,16 +1,21 @@
-from resources.GameUtils import *
+import resources.GameUtils as GameUtils
 from QTable import *
 import pygame
 
 
 def game_loop(render):
+    GameUtils.gameDisplay, GameUtils.traffic_images, GameUtils.car_image = GameUtils.initialize_resources()
     model = QTable()
     model.q_table = np.load("model.npy")
+    high_score = 0
+    average_score = 0
+    games = 0
 
     if render:
         pygame.init()
 
-    for i in range(1, 1000):
+    while True:
+        games += 1
         car, traffic_objects = initialize_traffic()
         dodged = 0
         total_reward = 0
@@ -27,32 +32,32 @@ def game_loop(render):
             if direction == "RIGHT":
                 car.go_right()
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    if render:
+            if render:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
                         pygame.quit()
-                    quit()
-
-            gameDisplay.fill(black)
+                        quit()
 
             traffic_objects.y += car.speed
             traffic_objects.lines += car.speed + 15
 
             if render:
-                draw_traffic(traffic_objects.x, traffic_objects.y, traffic_objects.lines, traffic_objects.curr_vehicle)
-                display_car(car.x, car.y)
-                display_score(dodged)
+                GameUtils.gameDisplay.fill(GameUtils.black)
+                GameUtils.draw_traffic(traffic_objects.x, traffic_objects.y, traffic_objects.lines, traffic_objects.curr_vehicle)
+                GameUtils.display_car(car.x, car.y)
+                GameUtils.display_score(dodged)
+                GameUtils.display_high_score(high_score)
 
             reward = 1
 
-            if traffic_objects.y > display_height:
+            if traffic_objects.y > GameUtils.display_height:
                 traffic_objects.update_state()
                 dodged += 1
                 reward = 10
                 car.speed += 0.15
 
             if traffic_objects.lines > 0:
-                traffic_objects.lines = -display_height
+                traffic_objects.lines = -GameUtils.display_height
 
             if car.in_front_of_obstacle(traffic_objects):
                 reward = -10 if car.crashed(traffic_objects) else -5
@@ -63,18 +68,27 @@ def game_loop(render):
 
             if car.crashed(traffic_objects):
                 if render:
-                    message_display("CRASH")
+                    GameUtils.message_display("CRASH")
+                if dodged > high_score:
+                    high_score = dodged
                 break
 
             if render:
                 pygame.display.update()
 
+        print("Game " + str(games))
         print("Reward: " + str(total_reward))
         print("Dodged: " + str(dodged))
+        print("High Score: " + str(high_score))
+        average_score = average_score*(games-1)/games + dodged/games
+        print("Average Score: " + str(average_score))
+
 
 
 if __name__ == '__main__':
-    game_loop(True)
+    render = False
+    GameUtils.RENDER = render
+    game_loop(render)
     pygame.quit()
     quit()
 

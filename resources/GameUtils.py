@@ -20,14 +20,19 @@ blue = (0, 0, 255)
 teal = (0, 243, 88)
 
 RENDER = True
+gameDisplay = None
+traffic_images = None
+car_image = None
+
 
 # resources
-if RENDER:
-    gameDisplay = pygame.display.set_mode((display_width, display_height))
-    pygame.display.set_caption("Zoom")
-    clock = pygame.time.Clock()
-    car_image = pygame.image.load("images/race_car.png")
+def initialize_resources():
+    display = None
+    if RENDER:
+        display = pygame.display.set_mode((display_width, display_height))
+        pygame.display.set_caption("Zoom")
 
+    race_car = pygame.image.load("images/race_car.png")
     black_car = pygame.image.load("images/black_car.png")
     blue_truck = pygame.image.load("images/blue_truck.png")
     orange_truck = pygame.image.load("images/orange_truck.png")
@@ -39,7 +44,8 @@ if RENDER:
     yellow_bus = pygame.image.load("images/yellow_bus.png")
     blue_bus = pygame.image.load("images/blue_bus.png")
     vehicle_images = [black_car, blue_truck, orange_truck, red_car, blue_car, orange_car, brown_car, yellow_car, yellow_bus, blue_bus]
-    traffic_images = [(img, img.get_rect().size[0], img.get_rect().size[1]) for img in vehicle_images]
+    traffic = [(img, img.get_rect().size[0], img.get_rect().size[1]) for img in vehicle_images]
+    return display, traffic, race_car
 
 
 def initialize_objects():
@@ -56,14 +62,22 @@ def display_score(count):
     gameDisplay.blit(text, (20, 20))
 
 
-def display_epoch(epoch):
+def display_text_top_right(message):
     font = pygame.font.SysFont(None, 40)
-    text = font.render("Epoch " + str(epoch), True, teal)
+    text = font.render(message, True, teal)
 
     text_rect = text.get_rect()
     text_rect.right = 780
     text_rect.top = 20
     gameDisplay.blit(text, text_rect)
+
+
+def display_epoch(epoch):
+    display_text_top_right("Epoch " + str(epoch))
+
+
+def display_high_score(score):
+    display_text_top_right("High Score: " + str(score))
 
 
 def display_car(x, y):

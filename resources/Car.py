@@ -6,8 +6,9 @@ class Car:
         self.display_width = display_width
         self.display_height = display_height
         self.width = 60
-        self.x = display_width * 0.48
-        self.y = display_height * 0.79
+        self.height = 121
+        self.x = display_width/2 - self.width/2
+        self.y = display_height - (self.height + 5)
         self.speed = speed
         self.turn_speed = speed/1.5
 
@@ -43,7 +44,7 @@ class Car:
         return ((self.x + self.width) > obstacle.x) and (self.x < (obstacle.x + obstacle.width))
 
     def hit_obstacle(self, obstacle):
-        tolerance = 20
+        tolerance = 28
         if self.y + tolerance < obstacle.y + obstacle.height:
             return self.in_front_of_obstacle(obstacle)
         else:

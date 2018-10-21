@@ -2,6 +2,5 @@ import numpy as np
 
 data = np.load("q_table.npy")
 
+print(data)
 
-# Try training for several epochs
-# Try reducing bins

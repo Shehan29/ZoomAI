@@ -1,70 +1,103 @@
-import pyautogui
+import resources.GameUtils as GameUtils
+import pygame
 from QTable import *
-import sys
-
-DEBUG = True
-
-# Hyper Parameters
-alpha = 0.1
-gamma = 0.6
-epsilon = 0.1
-
-# For plotting metrics
-all_epochs = []
-all_penalties = []
+import os.path
 
 
-def train(input_pipe):
-    epochs, penalties, reward, = 0, 0, 0
+def game_loop(render):
+    # file_name = "q_table.npy"
+    # if os.path.isfile(file_name):
+    #     q_table.q_table = np.load(file_name)
 
-    for i in range(1, 10):
-        print("Epoch " + str(i))
-        prev_action = 0  # STAY
+    if render:
+        pygame.init()
+
+    # Hyper Parameters
+    alpha = 0.1
+    gamma = 0.6
+    epsilon = 0.2
+
+    for i in range(1, 10000):
+        car, traffic = GameUtils.initialize_traffic()
         dodged = 0
+        total_reward = 0
 
         while True:
-            data = input_pipe.recv()
-            if data == "QUIT":
-                sys.exit()
+            curr_state = encode({**car.get_binned_state(), **traffic.get_binned_state()})
+
+            # execute action
+            if random.uniform(0, 1) < epsilon:
+                action = random_action()  # Explore action space
+            else:
+                action = np.argmax(q_table.q_table[curr_state])  # Exploit learned values
+
+            direction = ACTIONS[action]
+
+            if direction == "LEFT":
+                car.go_left()
+            if direction == "RIGHT":
+                car.go_right()
+
+            if render:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        quit()
+
+            traffic.y += car.speed
+
+            if render:
+                GameUtils.gameDisplay.fill(GameUtils.black)
+                GameUtils.draw_traffic(traffic.x, traffic.y, traffic.curr_vehicle)
+                GameUtils.display_car(car.x, car.y)
+                GameUtils.display_score(dodged)
 
             reward = 1
 
-            if "CRASH" in data:
-                reward = -10
-                penalties += 1
-
-            # get state (result of prev_action)
-            curr_state = encode(data)
-
-            if data["dodged"] > dodged:
-                dodged = data["dodged"]
+            if traffic.y > GameUtils.display_height:
+                traffic.update_state()
+                dodged += 1
                 reward = 10
+                car.speed += 0.15
 
-            old_value = q_table.q_table[curr_state, prev_action]
+            if car.in_front_of_obstacle(traffic):
+                reward = -10 if car.crashed(traffic) else -5
+            elif car.x < 100 and direction == "LEFT":
+                reward = -5
+            elif car.x > 700 and direction == "RIGHT":
+                reward = -5
+            elif action == 1:
+                reward = 5
+
+            total_reward += reward
+
+            old_value = q_table.q_table[curr_state, action]
             next_max = np.max(q_table.q_table[curr_state])
 
             new_value = (1 - alpha) * old_value + alpha * (reward + gamma * next_max)
-            q_table.q_table[curr_state, prev_action] = new_value
+            q_table.q_table[curr_state, action] = new_value
 
-            if "CRASH" in data:
+            if car.crashed(traffic):
+                if render:
+                    GameUtils.message_display("CRASH")
                 break
-            else:
-                # execute action
-                if random.uniform(0, 1) < epsilon:
-                    action = random_action()  # Explore action space
-                else:
-                    action = np.argmax(q_table.q_table[curr_state])  # Exploit learned values
 
-                direction = ACTIONS[action]
+            if render:
+                pygame.display.update()
 
-                if ACTIONS[action] == "LEFT":
-                    pyautogui.keyDown('left')
-                elif ACTIONS[action] == "RIGHT":
-                    pyautogui.keyDown('right')
-                else:
-                    pyautogui.keyUp('left')
-                    pyautogui.keyUp('right')
+        if i % 100 == 0:
+            np.save('q_table.npy', q_table.q_table)
+            epsilon *= 0.95
 
-                print(direction)
+        print("Epoch " + str(i))
+        print("Reward: " + str(total_reward))
+        print("Dodged: " + str(dodged))
 
-    np.save('q_table.npy', q_table.q_table)
+
+if __name__ == '__main__':
+    render = False
+    GameUtils.RENDER = render
+    game_loop(render)
+    pygame.quit()
+    quit()
+

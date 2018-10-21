@@ -1,9 +1,10 @@
-import pygame
 import random
-from ObstacleFactory import Obstacle
-from Car import Car
 
-pygame.init()
+import pygame
+
+from resources.Car import Car
+from resources.ObstacleFactory import Obstacle
+from resources.Traffic import Vehicle
 
 # display
 display_width = 800
@@ -17,20 +18,34 @@ green = (0, 255, 0)
 blue = (0, 0, 255)
 brown = (165, 42, 42)
 
+RENDER = True
+
 # resources
-gameDisplay = pygame.display.set_mode((display_width, display_height))
-pygame.display.set_caption("Lets Race")
-clock = pygame.time.Clock()
-car_image = pygame.image.load("Racecar.png")
+if RENDER:
+    gameDisplay = pygame.display.set_mode((display_width, display_height))
+    pygame.display.set_caption("Lets Race")
+    clock = pygame.time.Clock()
+    car_image = pygame.image.load("images/Racecar.png")
+
+    black_car = pygame.image.load("images/black_car.png")
+    blue_truck = pygame.image.load("images/blue_truck.png")
+    orange_truck = pygame.image.load("images/orange_truck.png")
+    red_car = pygame.image.load("images/red_car.png")
+    traffic_images = [black_car, blue_truck, orange_truck, red_car]
+    traffic = [(img, img.get_rect().size[0], img.get_rect().size[1]) for img in traffic_images]
 
 
 def initialize_objects():
-    return Car(display_width, display_height, 15), Obstacle(display_width, display_height)
+    return Car(display_width, display_height, 20), Obstacle(display_width, display_height)
+
+
+def initialize_traffic():
+    return Car(display_width, display_height, 20), Vehicle(display_width, display_height, traffic)
 
 
 def display_score(count):
     font = pygame.font.SysFont(None, 40)
-    text = font.render("Score " + str(count), True, black)
+    text = font.render("Score " + str(count), True, white)
     gameDisplay.blit(text, (20, 20))
 
 
@@ -45,6 +60,10 @@ def random_color():
 
 def draw_obstacle(x, y, width, height, color):
     pygame.draw.rect(gameDisplay, color, [x, y, width, height])
+
+
+def draw_traffic(x, y, vehicle):
+    gameDisplay.blit(vehicle, (x, y))
 
 
 def text_objects(text, font):

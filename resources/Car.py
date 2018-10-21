@@ -1,6 +1,6 @@
 class Car:
     speed_increment = 0.15
-    bin = 100
+    bin = 50
 
     def __init__(self, display_width, display_height, speed):
         self.display_width = display_width
@@ -14,7 +14,6 @@ class Car:
     def get_state(self):
         return {
             "car_x": int(self.x),
-            # "car_y": int(self.y),
         }
 
     def get_binned_state(self):
@@ -55,4 +54,4 @@ class Car:
 
     def inside_lane(self):
         left = self.x % 100
-        return left >= 20 and left <= 30
+        return 20 <= left <= 30

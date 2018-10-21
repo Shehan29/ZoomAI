@@ -17,23 +17,29 @@ red = (255, 0, 0)
 green = (0, 255, 0)
 yellow = (255, 255, 0)
 blue = (0, 0, 255)
-brown = (165, 42, 42)
+teal = (0, 243, 88)
 
 RENDER = True
 
 # resources
 if RENDER:
     gameDisplay = pygame.display.set_mode((display_width, display_height))
-    pygame.display.set_caption("Lets Race")
+    pygame.display.set_caption("Zoom")
     clock = pygame.time.Clock()
-    car_image = pygame.image.load("images/Racecar.png")
+    car_image = pygame.image.load("images/race_car.png")
 
     black_car = pygame.image.load("images/black_car.png")
     blue_truck = pygame.image.load("images/blue_truck.png")
     orange_truck = pygame.image.load("images/orange_truck.png")
     red_car = pygame.image.load("images/red_car.png")
-    traffic_images = [black_car, blue_truck, orange_truck, red_car]
-    traffic = [(img, img.get_rect().size[0], img.get_rect().size[1]) for img in traffic_images]
+    blue_car = pygame.image.load("images/blue_car.png")
+    orange_car = pygame.image.load("images/orange_car.png")
+    brown_car = pygame.image.load("images/brown_car.png")
+    yellow_car = pygame.image.load("images/yellow_car.png")
+    yellow_bus = pygame.image.load("images/yellow_bus.png")
+    blue_bus = pygame.image.load("images/blue_bus.png")
+    vehicle_images = [black_car, blue_truck, orange_truck, red_car, blue_car, orange_car, brown_car, yellow_car, yellow_bus, blue_bus]
+    traffic_images = [(img, img.get_rect().size[0], img.get_rect().size[1]) for img in vehicle_images]
 
 
 def initialize_objects():
@@ -41,13 +47,23 @@ def initialize_objects():
 
 
 def initialize_traffic():
-    return Car(display_width, display_height, 20), Vehicle(display_width, display_height, traffic)
+    return Car(display_width, display_height, 20), Vehicle(display_width, display_height, traffic_images)
 
 
 def display_score(count):
     font = pygame.font.SysFont(None, 40)
     text = font.render("Score " + str(count), True, white)
     gameDisplay.blit(text, (20, 20))
+
+
+def display_epoch(epoch):
+    font = pygame.font.SysFont(None, 40)
+    text = font.render("Epoch " + str(epoch), True, teal)
+
+    text_rect = text.get_rect()
+    text_rect.right = 780
+    text_rect.top = 20
+    gameDisplay.blit(text, text_rect)
 
 
 def display_car(x, y):

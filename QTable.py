@@ -10,9 +10,8 @@ def random_action():
 
 
 class QTable:
-    def __init__(self, table, feature_encoding):
-        self.q_table = table
-        self.feature_encoding = feature_encoding
+    def __init__(self):
+        self.q_table, self.feature_encoding = initialize_q_table()
 
 
 def get_space_and_encoding():
@@ -40,12 +39,9 @@ def initialize_q_table():
     return np.zeros([observation_space, len(ACTIONS)]), feature_encoding
 
 
-q_table = QTable(*initialize_q_table())
-
-
-def encode(data):
+def encode(data, feature_encoding):
     state = 0
-    for feature, encoding in q_table.feature_encoding.items():
+    for feature, encoding in feature_encoding.items():
         state += encoding * data[feature]
 
     return int(state)

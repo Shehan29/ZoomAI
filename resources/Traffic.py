@@ -7,7 +7,7 @@ def random_color():
 
 
 class Vehicle:
-    bin = 60
+    bin = 100
 
     def __init__(self, display_width, display_height, traffic):
         self.display_width = display_width
@@ -17,7 +17,9 @@ class Vehicle:
         self.max_obstacle_size = max(traffic, key=lambda t: t[1])[1]
         self.curr_vehicle, self.width, self.height = random.choice(traffic)
         self.y = -self.height
-        self.x = random.randrange(0, self.display_width - self.width)
+        lane = random.randrange(0, self.display_width - self.width)//100
+        self.x = lane*100 + 50 - self.width/2
+        self.lines = -display_height
 
     def get_state(self):
         return {
@@ -48,4 +50,5 @@ class Vehicle:
 
         # set new obstacle coordinates
         self.y = -self.height
-        self.x = random.randrange(0, self.display_width - self.width)
+        lane = random.randrange(0, self.display_width - self.width)//100
+        self.x = lane*100 + 50 - self.width/2

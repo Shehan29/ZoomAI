@@ -4,7 +4,7 @@ import pygame
 
 
 def game_loop(render):
-    q_table.q_table = np.load("q_table.npy")
+    q_table.q_table = np.load("model.npy")
 
     if render:
         pygame.init()
@@ -35,9 +35,10 @@ def game_loop(render):
             gameDisplay.fill(black)
 
             traffic_objects.y += car.speed
+            traffic_objects.lines += car.speed - 5
 
             if render:
-                draw_traffic(traffic_objects.x, traffic_objects.y, traffic_objects.curr_vehicle)
+                draw_traffic(traffic_objects.x, traffic_objects.y, traffic_objects.lines, traffic_objects.curr_vehicle)
                 display_car(car.x, car.y)
                 display_score(dodged)
 
@@ -48,6 +49,9 @@ def game_loop(render):
                 dodged += 1
                 reward = 10
                 car.speed += 0.15
+
+            if traffic_objects.lines > 0:
+                traffic_objects.lines = -display_height
 
             if car.in_front_of_obstacle(traffic_objects):
                 reward = -10 if car.crashed(traffic_objects) else -5

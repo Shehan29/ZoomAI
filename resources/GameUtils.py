@@ -11,10 +11,11 @@ display_width = 800
 display_height = 600
 
 # colours
-black = (0, 0, 0)
+black = (30, 30, 30)
 white = (255, 255, 255)
 red = (255, 0, 0)
 green = (0, 255, 0)
+yellow = (255, 255, 0)
 blue = (0, 0, 255)
 brown = (165, 42, 42)
 
@@ -62,7 +63,10 @@ def draw_obstacle(x, y, width, height, color):
     pygame.draw.rect(gameDisplay, color, [x, y, width, height])
 
 
-def draw_traffic(x, y, vehicle):
+def draw_traffic(x, y, traffic_y, vehicle):
+    for i in range(int(traffic_y), display_height, 150):
+        for j in range(97, display_width-100, 100):
+            pygame.draw.rect(gameDisplay, yellow, [j, i, 6, 50])
     gameDisplay.blit(vehicle, (x, y))
 
 

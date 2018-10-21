@@ -5,9 +5,9 @@ import os.path
 
 
 def game_loop(render):
-    # file_name = "q_table.npy"
-    # if os.path.isfile(file_name):
-    #     q_table.q_table = np.load(file_name)
+    file_name = "model.npy"
+    if os.path.isfile(file_name):
+        q_table.q_table = np.load(file_name)
 
     if render:
         pygame.init()
@@ -86,7 +86,7 @@ def game_loop(render):
                 pygame.display.update()
 
         if i % 100 == 0:
-            np.save('q_table.npy', q_table.q_table)
+            np.save('model.npy', q_table.q_table)
             epsilon *= 0.95
 
         print("Epoch " + str(i))

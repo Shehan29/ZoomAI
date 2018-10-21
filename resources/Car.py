@@ -52,3 +52,7 @@ class Car:
 
     def crashed(self, obstacle):
         return self.hit_wall() or self.hit_obstacle(obstacle)
+
+    def inside_lane(self):
+        left = self.x % 100
+        return left >= 20 and left <= 30

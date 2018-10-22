@@ -1,6 +1,9 @@
 # ZoomAI
+
 ## Project Description
 Reinforcement Q-Learning with Python - Train AI to Self-Drive
+
+Watch it in [action](https://www.youtube.com/watch?v=1tWcif5-w_w)!
 
 ## Training
 The training is done for 30,000 epochs, where each epoch is a single game.

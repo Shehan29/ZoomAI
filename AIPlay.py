@@ -84,9 +84,8 @@ def game_loop(render):
         print("Average Score: " + str(average_score))
 
 
-
 if __name__ == '__main__':
-    render = False
+    render = True
     GameUtils.RENDER = render
     game_loop(render)
     pygame.quit()
